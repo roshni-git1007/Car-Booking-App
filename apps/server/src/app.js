@@ -5,6 +5,9 @@ const rateLimit = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const { env } = require("./config/env");
+const { notFound, errorHandler } = require("./middlewares/error");
+const authRoutes = require("./routes/authRoutes");
+const carRoutes = require("./routes/carRoutes");
 
 const app = express();
 
@@ -35,10 +38,18 @@ app.use(
 
 // Request logs (dev)
 if (env.NODE_ENV !== "production") app.use(morgan("dev"));
+app.use("/api/cars", carRoutes);
+
+app.use("/api/cars", carRoutes);
 
 // Health check route
 app.get("/", (req, res) => {
   res.json({ status: "ok", env: env.NODE_ENV });
 });
+
+app.use("/api/auth", authRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = { app };
