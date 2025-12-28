@@ -8,6 +8,7 @@ const { env } = require("./config/env");
 const { notFound, errorHandler } = require("./middlewares/error");
 const authRoutes = require("./routes/authRoutes");
 const carRoutes = require("./routes/carRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
 
@@ -48,6 +49,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/bookings", bookingRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
