@@ -6,7 +6,9 @@
 	"scripts": {
 		"dev": "nodemon src/server.js",
 		"start": "node src/server.js",
-		"seed:admin": "node src/scripts/seedAdmin.js"
+		"seed:admin": "node src/scripts/seedAdmin.js",
+		"test": "cross-env NODE_ENV=test jest --runInBand",
+		"test:watch": "cross-env NODE_ENV=test jest --watch --runInBand"
 	},
 	"keywords": [],
 	"author": "",
@@ -28,6 +30,19 @@
 		"zod": "^4.2.1"
 	},
 	"devDependencies": {
-		"nodemon": "^3.1.11"
+		"cross-env": "^10.1.0",
+		"jest": "^30.2.0",
+		"mongodb-memory-server": "^11.0.1",
+		"nodemon": "^3.1.11",
+		"supertest": "^7.1.4"
+	},
+	"jest": {
+		"testEnvironment": "node",
+		"testMatch": [
+			"**/__tests__/**/*.test.js"
+		],
+		"setupFilesAfterEnv": [
+			"<rootDir>/src/__tests__/setup.js"
+		]
 	}
 }
