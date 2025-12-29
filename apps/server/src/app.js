@@ -42,8 +42,9 @@ app.use(
 );
 
 // Request logs (dev)
-if (env.NODE_ENV !== "production") app.use(morgan("dev"));
-app.use("/api/cars", carRoutes);
+if (env.NODE_ENV !== "production" && env.NODE_ENV !== "test") {
+  app.use(morgan("dev"));
+}
 
 app.use("/api/cars", carRoutes);
 
