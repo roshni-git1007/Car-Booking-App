@@ -2,6 +2,7 @@ const { z } = require("zod");
 const mongoose = require("mongoose");
 const Booking = require("../models/Booking");
 const Car = require("../models/Car");
+const { writeAuditLog } = require("../utils/audit");
 
 const createBookingSchema = z.object({
   carId: z.string().min(1),
@@ -58,6 +59,14 @@ async function createBooking(req, res, next) {
     });
 
     if (overlap) {
+      await writeAuditLog({
+        req,
+        action: "BOOKING_OVERLAP_BLOCKED",
+        entityType: "Car",
+        entityId: carId,
+        message: "Attempted overlapping booking",
+        metadata: { start, end },
+      });
       return res.status(409).json({
         message: "Car is already booked for the selected dates",
       });
@@ -71,6 +80,19 @@ async function createBooking(req, res, next) {
       status: "pending_payment",
       pricePerDaySnapshot,
       totalAmount,
+    });
+    await writeAuditLog({
+      req,
+      action: "BOOKING_CREATED",
+      entityType: "Booking",
+      entityId: booking._id,
+      message: "Booking created (pending payment)",
+      metadata: {
+        carId: booking.car.toString(),
+        startDate: booking.startDate,
+        endDate: booking.endDate,
+        totalAmount: booking.totalAmount,
+      },
     });
 
     res.status(201).json(booking);

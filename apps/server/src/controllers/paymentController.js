@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Booking = require("../models/Booking");
 const { stripe } = require("../config/stripe");
 const { env } = require("../config/env");
+const { writeAuditLog } = require("../utils/audit");
 
 const checkoutSchema = z.object({
   bookingId: z.string().min(1),
@@ -61,6 +62,16 @@ async function createCheckoutSession(req, res, next) {
 
     booking.stripeSessionId = session.id;
     await booking.save();
+
+    await writeAuditLog({
+      req,
+      action: "PAYMENT_CHECKOUT_CREATED",
+      entityType: "Booking",
+      entityId: booking._id,
+      message: "Stripe checkout session created",
+      metadata: { stripeSessionId: session.id, totalAmount: booking.totalAmount },
+    });
+
 
     res.json({ checkoutUrl: session.url, sessionId: session.id });
   } catch (err) {

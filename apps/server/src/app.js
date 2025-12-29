@@ -11,6 +11,8 @@ const carRoutes = require("./routes/carRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const stripeWebhookRoutes = require("./routes/stripeWebhookRoutes");
+const { requestContext } = require("./middlewares/requestContext");
+const auditLogRoutes = require("./routes/auditLogRoutes");
 
 const app = express();
 
@@ -46,15 +48,16 @@ if (env.NODE_ENV !== "production" && env.NODE_ENV !== "test") {
   app.use(morgan("dev"));
 }
 
-app.use("/api/cars", carRoutes);
+app.use(requestContext);
 
 // Health check route
 app.get("/", (req, res) => {
   res.json({ status: "ok", env: env.NODE_ENV });
 });
 
+app.use("/api/cars", carRoutes);
 app.use("/api/auth", authRoutes);
-
+app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/payments", paymentRoutes);
 

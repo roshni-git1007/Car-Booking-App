@@ -1,6 +1,7 @@
 const Booking = require("../models/Booking");
 const { stripe } = require("../config/stripe");
 const { env } = require("../config/env");
+const { writeAuditLog } = require("../utils/audit");
 
 async function stripeWebhook(req, res) {
   // IMPORTANT: req.body here is a Buffer because we will use express.raw()
@@ -21,7 +22,7 @@ async function stripeWebhook(req, res) {
   // Handle event types
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    
+
     // extra safety
     if (session.payment_status !== "paid") {
       return res.json({ received: true });
@@ -39,6 +40,19 @@ async function stripeWebhook(req, res) {
         booking.stripeSessionId = session.id || booking.stripeSessionId;
         booking.stripePaymentIntentId = paymentIntentId || booking.stripePaymentIntentId;
         await booking.save();
+
+        await writeAuditLog({
+          req,
+          action: "PAYMENT_SUCCEEDED",
+          entityType: "Booking",
+          entityId: booking._id,
+          message: "Stripe webhook marked booking as paid",
+          metadata: {
+            stripeSessionId: session.id,
+            stripePaymentIntentId: paymentIntentId,
+          },
+        });
+
       }
     }
   }
