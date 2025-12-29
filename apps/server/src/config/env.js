@@ -18,6 +18,11 @@ const envSchema = z.object({
     ADMIN_SEED_PASSWORD: z.string().min(8).optional(),
     ADMIN_SEED_NAME: z.string().min(2).optional(),
 
+    STRIPE_SECRET_KEY: z.string().min(1, "STRIPE_SECRET_KEY is required"),
+    // STRIPE_WEBHOOK_SECRET: z.string().min(1, "STRIPE_WEBHOOK_SECRET is required"),
+    APP_BASE_URL: z.string().min(1).default("http://localhost:5173"),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
     CORS_ORIGIN: z.string().default("http://localhost:5173"),
 });
 

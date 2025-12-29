@@ -9,11 +9,15 @@ const { notFound, errorHandler } = require("./middlewares/error");
 const authRoutes = require("./routes/authRoutes");
 const carRoutes = require("./routes/carRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const stripeWebhookRoutes = require("./routes/stripeWebhookRoutes");
 
 const app = express();
 
 // Security headers
 app.use(helmet());
+
+app.use("/api/webhooks/stripe", stripeWebhookRoutes);
 
 // JSON parsing
 app.use(express.json({ limit: "10kb" })); // prevent huge payload abuse
@@ -51,6 +55,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
