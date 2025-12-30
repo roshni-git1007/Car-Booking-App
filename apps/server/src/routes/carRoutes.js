@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   listCars,
+  listCarsAdmin,
   getCarById,
   createCar,
   updateCar,
@@ -13,6 +14,7 @@ const router = express.Router();
 
 // Public
 router.get("/", listCars);
+router.get("/admin/all", requireAuth, requireRole("admin"), listCarsAdmin);
 router.get("/:id", getCarById);
 
 // Admin only

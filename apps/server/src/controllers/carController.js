@@ -52,16 +52,45 @@ async function listCars(req, res, next) {
       if (maxPrice) filter.pricePerDay.$lte = Number(maxPrice);
     }
 
-    // isActive filter (string -> boolean)
-    if (typeof isActive !== "undefined") {
+    // isActive filter (default: show only active cars)
+    if (typeof isActive === "undefined") {
+      filter.isActive = true; // ✅ default behavior for public listing
+    } else {
       filter.isActive = isActive === "true";
     }
+
 
     const skip = (pageNum - 1) * limitNum;
 
     const [items, total] = await Promise.all([
       Car.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
       Car.countDocuments(filter),
+    ]);
+
+    res.json({
+      items,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function listCarsAdmin(req, res, next) {
+  try {
+    const { page = "1", limit = "20" } = req.query;
+
+    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 50);
+
+    const skip = (pageNum - 1) * limitNum;
+
+    const [items, total] = await Promise.all([
+      Car.find({}).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
+      Car.countDocuments({}),
     ]);
 
     res.json({
@@ -144,4 +173,4 @@ async function deleteCar(req, res, next) {
   }
 }
 
-module.exports = { listCars, getCarById, createCar, updateCar, deleteCar };
+module.exports = { listCars, listCarsAdmin, getCarById, createCar, updateCar, deleteCar };
