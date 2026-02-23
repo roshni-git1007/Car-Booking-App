@@ -53,12 +53,15 @@ api.interceptors.response.use(
 
         original.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(original);
-      } catch (refreshErr) {
-        processQueue(refreshErr, null);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
-        return Promise.reject(refreshErr);
-      } finally {
+      }catch (refreshErr) {
+  processQueue(refreshErr, null);
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("user");
+
+  window.location.href = "/login";// instant redirect to login
+
+  return Promise.reject(refreshErr);
+} finally {
         isRefreshing = false;
       }
     }

@@ -109,10 +109,13 @@ export default function AdminCarsManagePage() {
 	return (
 		<div>
 			<h2>Admin: Manage Cars</h2>
-			<p style={{ color: "#555" }}>
+			{/* <p style={{ color: "#555" }}>
 				Uses <code>GET /api/cars/admin/all</code> +{" "}
 				<code>PATCH /api/cars/:id</code>
-			</p>
+			</p> */}
+			<button className='rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50' onClick={load}>
+				Refresh
+			</button>
 
 			{msg && <p>{msg}</p>}
 			{loading ? <p>Loading...</p> : null}
@@ -212,6 +215,7 @@ export default function AdminCarsManagePage() {
 										<option>Diesel</option>
 										<option>Electric</option>
 										<option>Hybrid</option>
+										<option>Gasoline</option>
 									</select>
 
 									<input
@@ -281,10 +285,6 @@ export default function AdminCarsManagePage() {
 
 				{!loading && items.length === 0 ? <p>No cars found.</p> : null}
 			</div>
-
-			<button style={{ marginTop: 12 }} onClick={load}>
-				Refresh
-			</button>
 		</div>
 	);
 }

@@ -15,10 +15,22 @@ async function listAuditLogs(req, res, next) {
     const { page, limit, action, actorUser, entityType, entityId } = querySchema.parse(req.query);
 
     const filter = {};
-    if (action) filter.action = action;
-    if (actorUser) filter.actorUser = actorUser;
-    if (entityType) filter.entityType = entityType;
-    if (entityId) filter.entityId = entityId;
+
+    if (action) {
+      filter.action = { $regex: action, $options: "i" };// $options: "i" → Case insensitive
+    }
+
+    if (actorUser) {
+      filter.actorUser = actorUser; // keep exact (it's an ObjectId)
+    }
+
+    if (entityType) {
+      filter.entityType = { $regex: entityType, $options: "i" };
+    }
+
+    if (entityId) {
+      filter.entityId = { $regex: entityId, $options: "i" };
+    }
 
     const skip = (page - 1) * limit;
 

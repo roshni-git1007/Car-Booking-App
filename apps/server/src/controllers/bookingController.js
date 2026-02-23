@@ -104,7 +104,7 @@ async function createBooking(req, res, next) {
 async function myBookings(req, res, next) {
   try {
     const bookings = await Booking.find({ user: req.user.id })
-      .populate("car", "brand model category pricePerDay imageUrl")
+      .populate("car")
       .sort({ createdAt: -1 });
 
     res.json({ items: bookings });
