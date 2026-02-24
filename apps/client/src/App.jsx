@@ -20,33 +20,29 @@ function Protected({ children }) {
 }
 
 function AdminOnly({ children }) {
-	if (!isAdmin()) return <Navigate to='/' replace />;
+	const user = getUser();
+
+	if (!user) return <Navigate to="/login" replace />;
+	if (user.role !== "admin") return <Navigate to="/" replace />;
 	return children;
 }
 export default function App() {
-	const user = getUser();
 	const navigate = useNavigate();
 
 	function logout() {
 		clearAuth();
-		navigate("/login");
+		navigate("/login",{ replace: true });// removes previous page from browser history to prevent back navigation after logout
 	}
 
 	return (
   <Layout onLogout={logout}>
     <Routes>
-      <Route path="/" element={<CarsPage />} />
+      <Route path="/" element={<Protected><CarsPage /></Protected>} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
       <Route
-        path="/my-bookings"
-        element={
-          <Protected>
-            <MyBookingsPage />
-          </Protected>
-        }
-      />
+        path="/my-bookings" element={<Protected><MyBookingsPage/></Protected>} />
 
       <Route path="/payment-success" element={<PaymentSuccessPage />} />
       <Route path="/payment-cancelled" element={<PaymentCancelledPage />} />

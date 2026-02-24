@@ -1,0 +1,27 @@
+{
+  "name": "car-booking-app",
+  "version": "1.0.0",
+  "description": "```bash\r Securing & Enhancing a MERN Car Booking App (AI-Driven Dev & Testing)",
+  "main": "index.js",
+  "scripts": {
+    "server": "npm run dev --prefix apps/server",
+    "client": "npm run dev --prefix apps/client",
+    "stripe": "stripe listen --forward-to localhost:5000/api/webhooks/stripe",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roshni-git1007/Car-Booking-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roshni-git1007/Car-Booking-App/issues"
+  },
+  "homepage": "https://github.com/roshni-git1007/Car-Booking-App#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
